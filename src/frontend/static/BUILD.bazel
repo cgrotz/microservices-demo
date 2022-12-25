@@ -1,0 +1,11 @@
+filegroup(
+    name = "static",
+    srcs = glob([
+        "*.ico",
+        "icons/*.svg",
+        "images/*",
+        "img/products/*",
+        "styles/*",
+    ]),
+    visibility = ["//visibility:public"],
+)

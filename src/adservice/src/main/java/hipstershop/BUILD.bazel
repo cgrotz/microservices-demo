@@ -1,0 +1,142 @@
+load("@io_bazel_rules_docker//java:image.bzl", "java_image")
+
+java_image(
+    name = "adservice_image",
+    srcs = glob(["*.java"]),
+    main_class = "hipstershop.AdService",
+    runtime_deps = [
+        "@adservice_runtime//:com_fasterxml_jackson_core_jackson_core",
+        "@adservice_runtime//:com_fasterxml_jackson_core_jackson_databind",
+        "@adservice_runtime//:io_netty_netty_tcnative_boringssl_static",
+    ],
+    deps = [
+        # a versionless alias to @server_app//:com_google_guava_guava_27_0_jre
+        "@adservice//:com_google_api_grpc_proto_google_common_protos",
+        "@adservice//:javax_annotation_javax_annotation_api",
+        "@adservice//:io_grpc_grpc_api",
+        "@adservice//:io_grpc_grpc_protobuf",
+        "@adservice//:io_grpc_grpc_stub",
+        "@adservice//:io_grpc_grpc_netty",
+        "@adservice//:io_grpc_grpc_services",
+        "@adservice//:io_grpc_grpc_census",
+        "@adservice//:org_apache_logging_log4j_log4j_core",
+        "@adservice//:org_apache_logging_log4j_log4j_api",
+        "@adservice//:com_google_guava_guava_31_1_android",
+        "@adservice//:com_google_code_findbugs_jsr305",
+        "//src/adservice/src/main/proto:hipstershop_grpc_java",
+        "//src/adservice/src/main/proto:hipstershop_proto_java",
+    ],
+)
+
+container_push(
+    name = "adservice_image_push",
+    format = "Docker",
+    image = ":adservice_image",
+    registry = "europe-docker.pkg.dev",
+    repository = "swe-core-sandbox/microservice-demo/adservice",
+)
+
+java_binary(
+    name = "adservice",
+    srcs = glob(["*.java"]),
+    main_class = "hipstershop.AdService",
+    deps = [
+        # a versionless alias to @server_app//:com_google_guava_guava_27_0_jre
+        "@adservice//:com_google_api_grpc_proto_google_common_protos",
+        "@adservice//:javax_annotation_javax_annotation_api",
+        "@adservice//:io_grpc_grpc_api",
+        "@adservice//:io_grpc_grpc_protobuf",
+        "@adservice//:io_grpc_grpc_stub",
+        "@adservice//:io_grpc_grpc_netty",
+        "@adservice//:io_grpc_grpc_services",
+        "@adservice//:io_grpc_grpc_census",
+        "@adservice//:org_apache_logging_log4j_log4j_core",
+        "@adservice//:org_apache_logging_log4j_log4j_api",
+        "@adservice//:com_google_guava_guava_31_1_android",
+        "@adservice//:com_google_code_findbugs_jsr305",
+        "//src/adservice/src/main/proto:hipstershop_grpc_java",
+        "//src/adservice/src/main/proto:hipstershop_proto_java",
+    ],
+)
+
+java_library(
+    name = "adservice_library",
+    srcs = glob(["*.java"]),
+    visibility = ["//visibility:public"],
+    deps = [
+        # a versionless alias to @server_app//:com_google_guava_guava_27_0_jre
+        "@adservice//:com_google_api_grpc_proto_google_common_protos",
+        "@adservice//:javax_annotation_javax_annotation_api",
+        "@adservice//:io_grpc_grpc_api",
+        "@adservice//:io_grpc_grpc_protobuf",
+        "@adservice//:io_grpc_grpc_stub",
+        "@adservice//:io_grpc_grpc_netty",
+        "@adservice//:io_grpc_grpc_services",
+        "@adservice//:io_grpc_grpc_census",
+        "@adservice//:org_apache_logging_log4j_log4j_core",
+        "@adservice//:org_apache_logging_log4j_log4j_api",
+        "@adservice//:com_google_guava_guava_31_1_android",
+        "@adservice//:com_google_code_findbugs_jsr305",
+        "//src/adservice/src/main/proto:hipstershop_grpc_java",
+        "//src/adservice/src/main/proto:hipstershop_proto_java",
+    ],
+)
+
+java_binary(
+    name = "adservice_client",
+    srcs = glob(["*.java"]),
+    main_class = "hipstershop.AdServiceClient",
+    deps = [
+        # a versionless alias to @server_app//:com_google_guava_guava_27_0_jre
+        "@adservice//:com_google_api_grpc_proto_google_common_protos",
+        "@adservice//:javax_annotation_javax_annotation_api",
+        "@adservice//:io_grpc_grpc_api",
+        "@adservice//:io_grpc_grpc_protobuf",
+        "@adservice//:io_grpc_grpc_stub",
+        "@adservice//:io_grpc_grpc_netty",
+        "@adservice//:io_grpc_grpc_services",
+        "@adservice//:io_grpc_grpc_census",
+        "@adservice//:org_apache_logging_log4j_log4j_core",
+        "@adservice//:org_apache_logging_log4j_log4j_api",
+        "@adservice//:com_google_guava_guava_31_1_android",
+        "@adservice//:com_google_code_findbugs_jsr305",
+        "//src/adservice/src/main/proto:hipstershop_grpc_java",
+        "//src/adservice/src/main/proto:hipstershop_proto_java",
+    ],
+)
+
+java_image(
+    name = "adservice_client_image",
+    srcs = glob(["*.java"]),
+    main_class = "hipstershop.AdServiceClient",
+    runtime_deps = [
+        "@adservice_runtime//:com_fasterxml_jackson_core_jackson_core",
+        "@adservice_runtime//:com_fasterxml_jackson_core_jackson_databind",
+        "@adservice_runtime//:io_netty_netty_tcnative_boringssl_static",
+    ],
+    deps = [
+        # a versionless alias to @server_app//:com_google_guava_guava_27_0_jre
+        "@adservice//:com_google_api_grpc_proto_google_common_protos",
+        "@adservice//:javax_annotation_javax_annotation_api",
+        "@adservice//:io_grpc_grpc_api",
+        "@adservice//:io_grpc_grpc_protobuf",
+        "@adservice//:io_grpc_grpc_stub",
+        "@adservice//:io_grpc_grpc_netty",
+        "@adservice//:io_grpc_grpc_services",
+        "@adservice//:io_grpc_grpc_census",
+        "@adservice//:org_apache_logging_log4j_log4j_core",
+        "@adservice//:org_apache_logging_log4j_log4j_api",
+        "@adservice//:com_google_guava_guava_31_1_android",
+        "@adservice//:com_google_code_findbugs_jsr305",
+        "//src/adservice/src/main/proto:hipstershop_grpc_java",
+        "//src/adservice/src/main/proto:hipstershop_proto_java",
+    ],
+)
+
+container_push(
+    name = "adservice_client_image_push",
+    format = "Docker",
+    image = ":adservice_client_image",
+    registry = "europe-docker.pkg.dev",
+    repository = "swe-core-sandbox/microservice-demo/adservice_client",
+)

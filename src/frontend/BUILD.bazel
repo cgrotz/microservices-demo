@@ -1,0 +1,76 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
+load("@io_bazel_rules_docker//container:container.bzl", "container_image", "container_push")
+load("@bazel_tools//tools/build_defs/pkg:pkg.bzl", "pkg_tar")
+
+go_library(
+    name = "frontend_lib",
+    srcs = [
+        "deployment_details.go",
+        "handlers.go",
+        "main.go",
+        "middleware.go",
+        "rpc.go",
+    ],
+    importpath = "github.com/GoogleCloudPlatform/microservices-demo/src/frontend",
+    visibility = ["//visibility:private"],
+    deps = [
+        "//src/frontend/genproto",
+        "//src/frontend/money",
+        "@com_github_google_uuid//:go_default_library",
+        "@com_github_gorilla_mux//:go_default_library",
+        "@com_github_pkg_errors//:go_default_library",
+        "@com_github_sirupsen_logrus//:go_default_library",
+        "@com_google_cloud_go_compute_metadata//:go_default_library",
+        "@com_google_cloud_go_profiler//:go_default_library",
+        "@io_opentelemetry_go_contrib_instrumentation_google_golang_org_grpc_otelgrpc//:go_default_library",
+        "@io_opentelemetry_go_contrib_instrumentation_net_http_otelhttp//:go_default_library",
+        "@io_opentelemetry_go_otel//:go_default_library",
+        "@io_opentelemetry_go_otel//propagation:go_default_library",
+        "@io_opentelemetry_go_otel_exporters_otlp_otlptrace_otlptracegrpc//:go_default_library",
+        "@io_opentelemetry_go_otel_sdk//trace:go_default_library",
+        "@org_golang_google_grpc//:go_default_library",
+    ],
+)
+
+go_binary(
+    name = "frontend",
+    embed = [":frontend_lib"],
+    goarch = "arm64",
+    goos = "linux",
+    visibility = ["//visibility:public"],
+)
+
+pkg_tar(
+    name = "templates",
+    srcs = ["//src/frontend/templates"],
+    package_dir = "/",
+)
+
+pkg_tar(
+    name = "static",
+    srcs = ["//src/frontend/static"],
+    package_dir = "/",
+)
+
+container_image(
+    name = "frontend_image",
+    base = "@debian11//image",  #distroless_base
+    entrypoint = ["/frontend"],
+    files = [
+        ":frontend",
+    ],
+    repository = "europe-docker.pkg.dev/swe-core-sandbox/microservice-demo",
+    tars = [
+        ":static",
+        ":templates",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+container_push(
+    name = "frontend_image_push",
+    format = "Docker",
+    image = ":frontend_image",
+    registry = "europe-docker.pkg.dev",
+    repository = "swe-core-sandbox/microservice-demo/frontend",
+)
