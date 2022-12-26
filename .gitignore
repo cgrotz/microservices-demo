@@ -1,4 +1,5 @@
-bazel-*/
+bazel-out/
+bazel-microservices-demo-bazel/
 bin/
 pkg/
 .DS_Store
