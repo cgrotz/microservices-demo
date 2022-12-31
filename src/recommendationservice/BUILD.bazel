@@ -6,18 +6,17 @@ load("@io_bazel_rules_docker//python3:image.bzl", "py3_image")
 load("@emailservice_deps//:requirements.bzl", "requirement")
 
 app_layer(
-    name = "emailservice_image",
+    name = "recommendationservice_image",
     base = "//:py3_base",
-    binary = ":emailservice",
+    binary = ":recommendationservice",
     create_empty_workspace_dir = True,
     entrypoint = ["/usr/bin/python3"],
 )
 
 py_binary(
-    name = "emailservice",
+    name = "recommendationservice",
     srcs = glob(["*.py"]),
-    main = "email_server.py",
-    data = ["//src/emailservice/templates"],
+    main = "recommendation_server.py",
     deps = [
         requirement("backoff"),
         requirement("cachetools"),
@@ -27,17 +26,12 @@ py_binary(
         requirement("google-api-core"),
         requirement("google_api_python_client"),
         requirement("google_auth"),
-        requirement("google_auth_httplib2"),
         requirement("google_cloud_profiler"),
         requirement("google_cloud_trace"),
         requirement("googleapis_common_protos"),
         requirement("grpcio"),
         requirement("grpcio_health_checking"),
         requirement("grpcio_status"),
-        requirement("httplib2"),
-        requirement("idna"),
-        requirement("jinja2"),
-        requirement("markupsafe"),
         requirement("opentelemetry_api"),
         requirement("opentelemetry_distro"),
         requirement("opentelemetry_exporter_otlp_proto_grpc"),
@@ -53,7 +47,6 @@ py_binary(
         requirement("pyparsing"),
         requirement("python_json_logger"),
         requirement("requests"),
-        requirement("rsa"),
         requirement("six"),
         requirement("typing_extensions"),
         requirement("uritemplate"),
@@ -63,9 +56,9 @@ py_binary(
 )
 
 container_push(
-    name = "emailservice_image_push",
+    name = "recommendationservice_image_push",
     format = "Docker",
-    image = ":emailservice_image",
+    image = ":recommendationservice_image",
     registry = "europe-docker.pkg.dev",
-    repository = "swe-core-sandbox/microservice-demo/emailservice",
+    repository = "swe-core-sandbox/microservice-demo/recommendationservice",
 )

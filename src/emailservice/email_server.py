@@ -43,7 +43,7 @@ logger = getJSONLogger('emailservice-server')
 
 # Loads confirmation email template from file
 env = Environment(
-    loader=FileSystemLoader('templates'),
+    loader=FileSystemLoader('/app/src/emailservice/emailservice.runfiles/__main__/src/emailservice/templates'), # TODO Christoph: That could be a lot nicer
     autoescape=select_autoescape(['html', 'xml'])
 )
 template = env.get_template('confirmation.html')

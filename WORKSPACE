@@ -232,10 +232,10 @@ container_pull(
 
 container_pull(
     name = "python_bullseye",
-    digest = "sha256:1eff2926e10eed27f398d53be53538b76eff4f61dfd1f81be4e0c5e854ad1ae5",
+    digest = "sha256:08dfb526b02f1b849ca4ce479b51f100448053a67b64905a63dcdad2fe6802c5",
     registry = "index.docker.io",
     repository = "library/python",
-    tag = "3.7.16-slim-bullseye",
+    tag = "3.10.9-bullseye",
 )
 
 load(
