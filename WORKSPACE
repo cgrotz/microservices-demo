@@ -1,6 +1,39 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 http_archive(
+    name = "rules_pkg",
+    sha256 = "eea0f59c28a9241156a47d7a8e32db9122f3d50b505fae0f33de6ce4d9b61834",
+    urls = [
+        "https://mirror.bazel.build/github.com/bazelbuild/rules_pkg/releases/download/0.8.0/rules_pkg-0.8.0.tar.gz",
+        "https://github.com/bazelbuild/rules_pkg/releases/download/0.8.0/rules_pkg-0.8.0.tar.gz",
+    ],
+)
+
+load("@rules_pkg//:deps.bzl", "rules_pkg_dependencies")
+
+rules_pkg_dependencies()
+
+# Python
+http_archive(
+    name = "rules_python",
+    sha256 = "497ca47374f48c8b067d786b512ac10a276211810f4a580178ee9b9ad139323a",
+    strip_prefix = "rules_python-0.16.1",
+    url = "https://github.com/bazelbuild/rules_python/archive/refs/tags/0.16.1.tar.gz",
+)
+
+load("@rules_python//python:pip.bzl", "pip_parse")
+
+pip_parse(
+    name = "emailservice_deps",
+    requirements_lock = "//src/emailservice:requirements.txt",
+)
+
+load("@emailservice_deps//:requirements.bzl", "install_deps")
+
+install_deps()
+
+# Golang
+http_archive(
     name = "io_bazel_rules_go",
     sha256 = "56d8c5a5c91e1af73eca71a6fab2ced959b67c86d12ba37feedb0a2dfea441a6",
     urls = [
@@ -9,6 +42,7 @@ http_archive(
     ],
 )
 
+# Gazelle
 http_archive(
     name = "bazel_gazelle",
     sha256 = "efbbba6ac1a4fd342d5122cbdfdb82aeb2cf2862e35022c752eaddffada7c3f3",
@@ -30,6 +64,10 @@ go_rules_dependencies()
 go_register_toolchains("1.19.4")
 
 gazelle_dependencies()
+
+load("@rules_python//gazelle:deps.bzl", _py_gazelle_deps = "gazelle_deps")
+
+_py_gazelle_deps()
 
 # JVM
 RULES_JVM_EXTERNAL_TAG = "4.5"
@@ -91,6 +129,37 @@ maven_install(
 load("@maven//:compat.bzl", "compat_repositories")
 
 compat_repositories()
+
+# nodejs
+http_archive(
+    name = "build_bazel_rules_nodejs",
+    sha256 = "dcc55f810142b6cf46a44d0180a5a7fb923c04a5061e2e8d8eb05ccccc60864b",
+    urls = ["https://github.com/bazelbuild/rules_nodejs/releases/download/5.8.0/rules_nodejs-5.8.0.tar.gz"],
+)
+
+http_archive(
+    name = "rules_nodejs",
+    sha256 = "08337d4fffc78f7fe648a93be12ea2fc4e8eb9795a4e6aa48595b66b34555626",
+    urls = ["https://github.com/bazelbuild/rules_nodejs/releases/download/5.8.0/rules_nodejs-core-5.8.0.tar.gz"],
+)
+
+load("@build_bazel_rules_nodejs//:repositories.bzl", "build_bazel_rules_nodejs_dependencies")
+
+build_bazel_rules_nodejs_dependencies()
+
+load("@build_bazel_rules_nodejs//:index.bzl", "node_repositories", "npm_install")
+
+npm_install(
+    name = "currencyservice",
+    package_json = "//src/currencyservice:package.json",
+    package_lock_json = "//src/currencyservice:package-lock.json",
+)
+
+npm_install(
+    name = "paymentservice",
+    package_json = "//src/paymentservice:package.json",
+    package_lock_json = "//src/paymentservice:package-lock.json",
+)
 
 # protobuf
 http_archive(
@@ -159,4 +228,43 @@ container_pull(
     digest = "sha256:c8d57219ab85bcbbc5c2560baf2d07e779d6f75291f21a3451b265ea0c32a457",
     registry = "gcr.io",
     repository = "distroless/java",
+)
+
+container_pull(
+    name = "python_bullseye",
+    digest = "sha256:1eff2926e10eed27f398d53be53538b76eff4f61dfd1f81be4e0c5e854ad1ae5",
+    registry = "index.docker.io",
+    repository = "library/python",
+    tag = "3.7.16-slim-bullseye",
+)
+
+load(
+    "@io_bazel_rules_docker//nodejs:image.bzl",
+    _nodejs_image_repos = "repositories",
+)
+
+_nodejs_image_repos()
+
+load(
+    "@io_bazel_rules_docker//python:image.bzl",
+    _py_image_repos = "repositories",
+)
+
+_py_image_repos()
+
+load(
+    "@io_bazel_rules_docker//python3:image.bzl",
+    _py3_image_repos = "repositories",
+)
+
+_py3_image_repos()
+
+# GRPC_HEALTH_PROBE
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_file")
+
+http_file(
+    name = "grpc_health_probe",
+    downloaded_file_path = "grpc_health_probe",
+    sha256 = "0d65d41ae2038757e0700dc61d293baa0d5dd33f4c2a6942199f827b0cfedff8",
+    url = "https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/v0.4.14/grpc_health_probe-linux-amd64",
 )

@@ -1,0 +1,31 @@
+load("@io_bazel_rules_docker//nodejs:image.bzl", "nodejs_image")
+load("@io_bazel_rules_docker//container:container.bzl", "container_push")
+
+nodejs_image(
+    name = "paymentservice_image",
+    data = [
+        ":server.js",
+        "@paymentservice//:node_modules/@google-cloud/profiler",
+        "@paymentservice//:node_modules/@grpc/grpc-js",
+        "@paymentservice//:node_modules/@grpc/proto-loader",
+        "@paymentservice//:node_modules/@opentelemetry/api",
+        "@paymentservice//:node_modules/@opentelemetry/exporter-otlp-grpc",
+        "@paymentservice//:node_modules/@opentelemetry/instrumentation-grpc",
+        "@paymentservice//:node_modules/@opentelemetry/sdk-node",
+        "@paymentservice//:node_modules/@opentelemetry/sdk-trace-base",
+        "@paymentservice//:node_modules/pino",
+        "@paymentservice//:node_modules/simple-card-validator",
+        "@paymentservice//:node_modules/uuid",
+    ],
+    entry_point = ":server.js",
+    include_node_repo_args = False,
+    node_repository_name = "nodejs_linux_arm64",
+)
+
+container_push(
+    name = "paymentservice_image_push",
+    format = "Docker",
+    image = ":paymentservice_image",
+    registry = "europe-docker.pkg.dev",
+    repository = "swe-core-sandbox/microservice-demo/paymentservice",
+)

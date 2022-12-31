@@ -1,0 +1,33 @@
+load("@io_bazel_rules_docker//nodejs:image.bzl", "nodejs_image")
+load("@io_bazel_rules_docker//container:container.bzl", "container_push")
+
+nodejs_image(
+    name = "currencyservice_image",
+    data = [
+        ":server.js",
+        "@currencyservice//:node_modules/@google-cloud/profiler",
+        "@currencyservice//:node_modules/@google-cloud/trace-agent",
+        "@currencyservice//:node_modules/@grpc/grpc-js",
+        "@currencyservice//:node_modules/@grpc/proto-loader",
+        "@currencyservice//:node_modules/@opentelemetry/api",
+        "@currencyservice//:node_modules/@opentelemetry/exporter-otlp-grpc",
+        "@currencyservice//:node_modules/@opentelemetry/instrumentation-grpc",
+        "@currencyservice//:node_modules/@opentelemetry/sdk-node",
+        "@currencyservice//:node_modules/@opentelemetry/sdk-trace-base",
+        "@currencyservice//:node_modules/async",
+        "@currencyservice//:node_modules/google-protobuf",
+        "@currencyservice//:node_modules/pino",
+        "@currencyservice//:node_modules/xml2js",
+    ],
+    entry_point = ":server.js",
+    include_node_repo_args = False,
+    node_repository_name = "nodejs_linux_arm64",
+)
+
+container_push(
+    name = "currencyservice_image_push",
+    format = "Docker",
+    image = ":currencyservice_image",
+    registry = "europe-docker.pkg.dev",
+    repository = "swe-core-sandbox/microservice-demo/currencyservice",
+)

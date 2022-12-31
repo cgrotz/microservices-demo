@@ -1,9 +1,13 @@
 load("@io_bazel_rules_docker//java:image.bzl", "java_image")
+load("@io_bazel_rules_docker//container:container.bzl", "container_push")
 
 java_image(
     name = "adservice_image",
     srcs = glob(["*.java"]),
     main_class = "hipstershop.AdService",
+    resources = [
+        "//src/adservice/src/main/resources",
+    ],
     runtime_deps = [
         "@adservice_runtime//:com_fasterxml_jackson_core_jackson_core",
         "@adservice_runtime//:com_fasterxml_jackson_core_jackson_databind",
@@ -86,6 +90,9 @@ java_binary(
     name = "adservice_client",
     srcs = glob(["*.java"]),
     main_class = "hipstershop.AdServiceClient",
+    resources = [
+        "//src/adservice/src/main/resources",
+    ],
     deps = [
         # a versionless alias to @server_app//:com_google_guava_guava_27_0_jre
         "@adservice//:com_google_api_grpc_proto_google_common_protos",

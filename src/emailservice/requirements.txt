@@ -14,7 +14,7 @@ charset-normalizer==2.1.1
     # via requests
 deprecated==1.2.13
     # via opentelemetry-api
-google-api-core[grpc]==2.11.0
+google-api-core==2.11.0
     # via
     #   -r requirements.in
     #   google-api-python-client
@@ -136,4 +136,4 @@ wrapt==1.14.1
     #   opentelemetry-instrumentation-grpc
 
 # The following packages are considered to be unsafe in a requirements file:
-# setuptools
+setuptools==65.6.3
